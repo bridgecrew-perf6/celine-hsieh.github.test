@@ -1,3 +1,34 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:feb47276459ae89409e16453597bdd801e96154631e5d775a69579ae19a9e2c9
-size 1068
+var viewer;
+
+function launchViewer(urn) {
+  var options = {
+    env: 'AutodeskProduction',
+    getAccessToken: getForgeToken
+  };
+
+  Autodesk.Viewing.Initializer(options, () => {
+    viewer = new Autodesk.Viewing.GuiViewer3D(document.getElementById('forgeViewer'), { extensions: ['MyAwesomeExtension','HandleSelectionExtension'] });
+    viewer.start();
+    var documentId = 'urn:' + urn;
+    Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
+  });
+}
+
+function onDocumentLoadSuccess(doc) {
+  var viewables = doc.getRoot().getDefaultGeometry();
+  viewer.loadDocumentNode(doc, viewables).then(i => {
+    // documented loaded, any action?
+  });
+}
+
+function onDocumentLoadFailure(viewerErrorCode, viewerErrorMsg) {
+  console.error('onDocumentLoadFailure() - errorCode:' + viewerErrorCode + '\n- errorMessage:' + viewerErrorMsg);
+}
+
+function getForgeToken(callback) {
+  fetch('/api/forge/oauth/token').then(res => {
+    res.json().then(data => {
+      callback(data.access_token, data.expires_in);
+    });
+  });
+}

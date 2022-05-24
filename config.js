@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:536e04f389622167f16735a7aff421f49855e01cd529aeb3803e663604f807fe
-size 549
+// Autodesk Forge configuration
+module.exports = {
+    // Set environment variables or hard-code here
+    credentials: {
+        client_id: process.env.FORGE_CLIENT_ID,
+        client_secret: process.env.FORGE_CLIENT_SECRET,
+        callback_url: process.env.FORGE_CALLBACK_URL
+    },
+    scopes: {
+        // Required scopes for the server-side application
+        internal: ['bucket:create', 'bucket:read', 'data:read', 'data:create', 'data:write'],
+        // Required scope for the client-side viewer
+        public: ['viewables:read']
+    }
+};
